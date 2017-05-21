@@ -1,0 +1,38 @@
+(function (modules, root, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(modules, factory);
+  } else if (typeof module === "object" && module.exports) {
+    module.exports = factory.call(root);
+  } else {
+    root["mu-jquery-step/jquery.step"] = factory.call(root);
+  }
+})([], this, function () {
+  function Step(index, element) {
+    this.index = index;
+    this.element = element;
+  }
+
+  return function (selector, target, callback) {
+    var prev;
+    var step;
+    var list = Step.prototype = {};
+    var elements = this
+      .find(selector)
+      .map(function (index, element) {
+        var next = new Step(index, element);
+        if (prev) {
+          next.prev = prev;
+          prev.next = next;
+        }
+        else {
+          list.first = next;
+        }
+        if (element === target) {
+          step = next;
+        }
+        return list.last = prev = next;
+      });
+
+    return callback.call(elements, step);
+  }
+});
